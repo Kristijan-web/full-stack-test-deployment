@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer components {
+  .btn {
+    border: none;
+    background-color: lightgreen;
+    padding: 10px 25px;
+  }
+  .btn:active {
+    background-color: darkgreen;
+  }
+}
