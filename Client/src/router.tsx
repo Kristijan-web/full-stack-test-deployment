@@ -4,11 +4,17 @@ import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorBoundaryDisplay from "./ui/ErrorBoundaryDisplay";
 
 const router = createBrowserRouter([
   {
     path: "/signup",
-    element: <SignupPage />,
+    element: (
+      <ErrorBoundary FallbackComponent={ErrorBoundaryDisplay}>
+        <SignupPage />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "/login",
