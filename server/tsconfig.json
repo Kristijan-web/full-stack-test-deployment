@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "allowJs": true,
+    "noEmitOnError": true,
+    "types": ["node"]
+  },
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
+}
