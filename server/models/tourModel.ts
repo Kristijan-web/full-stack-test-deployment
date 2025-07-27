@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 
 const tourSchema = new mongoose.Schema({
   tourName: {
@@ -44,6 +44,9 @@ const tourSchema = new mongoose.Schema({
   },
 });
 
+type TourType = InferSchemaType<typeof tourSchema>;
+
 const Tour = mongoose.model("Tour", tourSchema);
 
 export default Tour;
+export { TourType };

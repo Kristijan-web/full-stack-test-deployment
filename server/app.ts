@@ -1,6 +1,14 @@
 import express from "express";
 import handleError from "./controllers/handleError.js";
+import userRouter from "./routes/userRouter.js";
+import tourRouter from "./routes/tourRouter.js";
+
 const app = express();
+
+app.use(express.json({ limit: "10kb" }));
+
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/tours", tourRouter);
 
 app.use(handleError);
 export default app;
