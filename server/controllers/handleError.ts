@@ -18,6 +18,7 @@ function handleError(
   res: Response,
   next: NextFunction
 ) {
+  console.log(error);
   if (process.env.NODE_ENV === "development") {
     handleDevelopment(error, res);
   } else {

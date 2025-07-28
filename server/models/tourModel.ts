@@ -40,7 +40,6 @@ const tourSchema = new mongoose.Schema({
   },
   tourCover: {
     type: String,
-    required: [true, "Tour cover image is required"],
   },
 });
 

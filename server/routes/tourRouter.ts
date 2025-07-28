@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createTour,
+  filterTourBody,
   getTour,
   getTours,
   updateTour,
@@ -8,9 +9,11 @@ import {
 
 const tourRouter = express.Router();
 
-tourRouter.get("/api/v1/tours", getTours);
-tourRouter.get("/api/v1/tours/:id", getTour);
-tourRouter.post("/api/v1/tours", createTour);
-tourRouter.patch("/api/v1/tours/:id", updateTour);
+console.log("OLAAAA");
+
+tourRouter.get("/", getTours);
+tourRouter.get("/:id", getTour);
+tourRouter.post("/", filterTourBody, createTour);
+tourRouter.patch("/:id", updateTour);
 
 export default tourRouter;

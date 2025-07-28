@@ -6,6 +6,7 @@ function handleDevelopment(error, res) {
     });
 }
 function handleError(error, req, res, next) {
+    console.log(error);
     if (process.env.NODE_ENV === "development") {
         handleDevelopment(error, res);
     }
