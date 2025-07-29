@@ -1,7 +1,15 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema({
-  username: {
+interface IUser extends mongoose.Document {
+  email: string;
+  password: string;
+  confirmPassword: string | undefined;
+  role: string;
+}
+
+const userSchema = new mongoose.Schema<IUser>({
+  email: {
     type: String,
     required: [true, "Username is required"],
   },
@@ -18,6 +26,18 @@ const userSchema = new mongoose.Schema({
       },
     },
   },
+  role: {
+    type: String,
+    default: "user",
+  },
+});
+
+userSchema.pre("save", async function (next) {
+  if (this.isModified(this.password) || this.isNew) {
+    this.password = await bcrypt.hash(this.password, 12);
+    this.confirmPassword = undefined;
+  }
+  next();
 });
 
 const User = mongoose.model("users", userSchema);

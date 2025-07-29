@@ -5,11 +5,9 @@ import {
   getTour,
   getTours,
   updateTour,
-} from "../controllers/tourControlle.js";
+} from "../controllers/tourController.js";
 
 const tourRouter = express.Router();
-
-console.log("OLAAAA");
 
 tourRouter.get("/", getTours);
 tourRouter.get("/:id", getTour);

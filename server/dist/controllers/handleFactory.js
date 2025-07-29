@@ -8,13 +8,13 @@ function sendResponse(res, dataToSend, statusCode) {
         },
     });
 }
-const createOne = (Model) => {
+const getAll = (Model) => {
     return catchAsync(async (req, res, next) => {
-        const doc = await Model.create(req.body);
-        if (!doc) {
-            return next(new AppError("Failed to create document", 400));
+        const allDocs = await Model.find();
+        if (!allDocs) {
+            return next(new AppError("Provided id does not exist", 404));
         }
-        sendResponse(res, doc, 200);
+        sendResponse(res, allDocs, 200);
     });
 };
 const getOne = (Model) => {
@@ -28,13 +28,23 @@ const getOne = (Model) => {
         sendResponse(res, doc, 200);
     });
 };
-const getAll = (Model) => {
-    return catchAsync(async (req, res, next) => {
-        const allDocs = await Model.find();
-        if (!allDocs) {
-            return next(new AppError("Provided id does not exist", 404));
+const createOne = (Model) => {
+    return catchAsync(async function (req, res, next) {
+        const doc = await Model.create(req.body);
+        if (!doc) {
+            return next(new AppError("Failed to create document", 400));
         }
-        sendResponse(res, allDocs, 200);
+        sendResponse(res, doc, 200);
     });
 };
-export { createOne, getOne, getAll };
+const deleteOne = (Model) => {
+    return catchAsync(async (req, res, next) => {
+        const id = req.params;
+        const deletedDoc = await Model.findByIdAndDelete(id);
+        if (!deletedDoc) {
+            return next(new AppError("Failed to delete", 400));
+        }
+        sendResponse(res, deletedDoc, 204);
+    });
+};
+export { getAll, getOne, createOne, deleteOne };
