@@ -11,6 +11,7 @@ const signup = catchAsync(async (req, res, next) => {
     // 3. confirmPassword je u schema ali nije u bazi (koristi pre document middleware iz mongoose-a)
     // 4. Ako je pravljenje korisnika u bazi uspesno, onda napravi jwt token i posalji korisniku
     // 4.1 Ako pravljenje jwt tokena fail-uje onda obrisi korisnika iz baze
+    console.log("Evo body-a,", req.body);
     const newUser = await User.create({
         email: req.body.email,
         password: req.body.password,
