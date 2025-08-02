@@ -1,3 +1,3 @@
 export default function ShopLayout() {
-  return <div>Shop page</div>;
+  return <div>Shop page EEEEEEEEEEEEE</div>;
 }

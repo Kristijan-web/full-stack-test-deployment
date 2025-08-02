@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import SignupPage from "./pages/SignupPage";
 import CartPage from "./pages/CartPage";
 import ShopPage from "./pages/ShopPage";
+import ProtectedRoute from "./ui/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +19,15 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: "/cart",
         element: <CartPage />,
       },
       {
         path: "/shop",
-        element: <ShopPage />,
+        element: (
+          <ProtectedRoute allowedRoles="user">
+            <ShopPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
