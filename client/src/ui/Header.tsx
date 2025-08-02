@@ -16,6 +16,9 @@ export default function Header() {
             <NavLink to="/contact">Contact</NavLink>
           </li>
           <li>
+            <NavLink to="/cart">Cart</NavLink>
+          </li>
+          <li>
             <NavLink to="/signup">Signup</NavLink>
           </li>
         </ul>

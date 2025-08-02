@@ -3,11 +3,12 @@ import handleError from "./controllers/handleError.js";
 import userRouter from "./routes/userRouter.js";
 import tourRouter from "./routes/tourRouter.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(cors());
-
+app.use(cookieParser());
 app.use(express.json({ limit: "10kb" }));
 
 app.use("/api/v1/users", userRouter);

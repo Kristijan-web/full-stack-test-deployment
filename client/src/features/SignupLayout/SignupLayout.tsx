@@ -3,7 +3,7 @@ import useCatchAsync from "../../utills/catchAsync";
 import { useError } from "../../contexts/ErrorContext";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { Form } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 type inputTypes = {
   email: string;
@@ -15,6 +15,7 @@ export default function SignupLayout() {
   // const [email, setEmail] = useState<string>("");
   // const [password, setPassword] = useState<string>("");
   // const [confirmPassword, setconfirmPassword] = useState<string>("");
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { register, handleSubmit, getValues, formState } =
     useForm<inputTypes>();
@@ -43,7 +44,9 @@ export default function SignupLayout() {
         payload: { errorMessage: { message: responseData.message } },
       });
     }
+    console.log(responseData);
     toast.success("Signup successful");
+    navigate("/");
   }, setIsLoading);
 
   function onSuccess(data: inputTypes, e?: React.BaseSyntheticEvent) {

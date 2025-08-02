@@ -9,7 +9,7 @@ export default function App() {
     <ErrorProvider>
       <Toaster position="top-center" />
       <ErrorDisplay />
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </ErrorProvider>
   );
 }
