@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import bcrypt from "bcrypt";
 
 interface IUser extends mongoose.Document {
@@ -41,6 +41,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+const UserType = InferSchemaType<typeof userSchema>;
+
 const User = mongoose.model("users", userSchema);
 
 export default User;
+
+export { UserType };

@@ -53,6 +53,7 @@ const signup = catchAsync(async (req, res, next) => {
     secure: process.env.NODE_ENV === "production",
   };
   res.cookie("jwt", jwtToken, cookieOptions);
+  req.user = newUser;
 });
 
 export { protect, signup };
