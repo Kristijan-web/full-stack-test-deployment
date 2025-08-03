@@ -8,11 +8,10 @@ type Props = {
 };
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
   const { user, isLoading } = useUser();
-
   if (isLoading) {
     return <p>Loading...</p>;
   }
-  if (!user) {
+  if (user === null) {
     return <Navigate to="/signup" replace />;
   }
   if (allowedRoles.includes(user.role)) {

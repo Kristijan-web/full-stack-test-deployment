@@ -6,6 +6,10 @@ interface IUser extends mongoose.Document {
   password: string;
   confirmPassword: string | undefined;
   role: string;
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -41,7 +45,14 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-const UserType = InferSchemaType<typeof userSchema>;
+userSchema.methods.correctPassword = async function (
+  userPass: string,
+  dbPass: string
+): Promise<boolean> {
+  return await bcrypt.compare(userPass, dbPass);
+};
+
+type UserType = InferSchemaType<typeof userSchema>;
 
 const User = mongoose.model("users", userSchema);
 

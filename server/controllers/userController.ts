@@ -10,7 +10,7 @@ const createUser = createOne(User);
 const getUser = getOne(User);
 
 const getMe = catchAsync(async (req, res, next) => {
-  req.params.id = req.body.id;
+  req.params.id = req.user.id;
   next();
 });
 

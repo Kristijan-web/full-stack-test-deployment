@@ -36,8 +36,19 @@ export default function UserProvider({ children }: Props) {
     function gettingUserData() {
       async function getData() {
         try {
-          const fetchData = await fetch(`${API_URL}/v1/users/me`);
+          const fetchData = await fetch(`${API_URL}/api/v1/users/me`, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+          });
+          // moguce je da server ne vraca JSON!
           const userData = await fetchData.json();
+          console.log("evo korisnikovih podataka, ", userData);
+          if (!fetchData.ok) {
+            setUser(null);
+            return;
+          }
           setUser(userData);
         } catch (err) {
           if (err instanceof Error) {

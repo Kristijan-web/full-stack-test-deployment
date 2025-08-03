@@ -1,8 +1,9 @@
 import express from "express";
-import { protect, signup } from "../controllers/authController.js";
+import { login, protect, signup } from "../controllers/authController.js";
 import { getMe, getUser } from "../controllers/userController.js";
 const userRouter = express.Router();
 userRouter.post("/signup", signup);
+userRouter.post("/login", login);
 userRouter.post("/me", protect, getMe, getUser);
 // userRouter.get("/:id", getUsers), userRouter.get("/:id", getUser);
 // userRouter.post("/", createUser), userRouter.patch("/", updateUser);
