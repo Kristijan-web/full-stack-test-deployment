@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { Form } from "react-router-dom";
-import useCatchAsync from "../../utills/catchAsync";
 import { useError } from "../../contexts/ErrorContext";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
@@ -15,7 +14,7 @@ export default function LoginLayout() {
   const { errors } = formState;
   const { dispatch } = useError();
 
-  const handleLogin = useCatchAsync(async () => {
+  const handleLogin = async () => {
     const sendLoginData = await fetch(`${API_URL}/api/v1/users/login`, {
       method: "POST",
       headers: {
@@ -41,12 +40,12 @@ export default function LoginLayout() {
         });
       }
     }
-  });
+  };
 
   function handleSuccess(data: Form, e?: React.BaseSyntheticEvent) {
     console.log(data);
     if (e) {
-      handleLogin(e);
+      handleLogin();
     } else {
       dispatch({
         type: "setErrorProgrammatic",

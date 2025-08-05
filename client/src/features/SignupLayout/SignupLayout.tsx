@@ -1,9 +1,9 @@
 import { useState } from "react";
-import useCatchAsync from "../../utills/catchAsync";
-import { useError } from "../../contexts/ErrorContext";
+// import { useError } from "../../contexts/ErrorContext";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { Form, useNavigate } from "react-router-dom";
+import useCatchAsync from "../../utills/catchAsync";
 
 type inputTypes = {
   email: string;
@@ -20,7 +20,7 @@ export default function SignupLayout() {
   const { register, handleSubmit, getValues, formState } =
     useForm<inputTypes>();
   const { errors } = formState;
-  const { dispatch } = useError();
+  // const { dispatch } = useError();
 
   const handleSignup = useCatchAsync(async (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
@@ -32,22 +32,24 @@ export default function SignupLayout() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: getValues().email,
+        // email: getValues().email,
         password: getValues().password,
         confirmPassword: getValues().password,
       }),
     });
     const responseData = await fetchReq.json();
     if (!fetchReq.ok) {
-      return dispatch({
-        type: "setErrorOperational",
-        payload: { errorMessage: { message: responseData.message } },
-      });
+      console.log("evo upao u not ok");
+      throw new Error(responseData.error);
+      // return dispatch({
+      //   type: "setErrorOperational",
+      //   payload: { errorMessage: { message: responseData.message } },
+      // });
     }
     console.log(responseData);
     toast.success("Signup successful");
     navigate("/");
-  }, setIsLoading);
+  });
 
   function onSuccess(data: inputTypes, e?: React.BaseSyntheticEvent) {
     console.log("Evo data za fields, ", data);
