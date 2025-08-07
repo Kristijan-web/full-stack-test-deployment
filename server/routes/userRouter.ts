@@ -11,4 +11,6 @@ userRouter.post("/me", protect, getMe, getUser);
 // userRouter.get("/:id", getUsers), userRouter.get("/:id", getUser);
 // userRouter.post("/", createUser), userRouter.patch("/", updateUser);
 
+userRouter.get("/:id", getUser);
+
 export default userRouter;

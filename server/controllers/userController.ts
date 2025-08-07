@@ -1,5 +1,4 @@
 import catchAsync from "../utills/catchAsync.js";
-import AppError from "../utills/appError.js";
 import User from "../models/userModel.js";
 import { createOne, getOne } from "./handleFactory.js";
 

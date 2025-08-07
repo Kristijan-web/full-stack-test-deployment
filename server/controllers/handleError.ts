@@ -1,20 +1,34 @@
 import { Request, Response, NextFunction } from "express";
+import AppError from "../utills/appError.js";
+import mongoose from "mongoose";
 
-interface AppError extends Error {
+interface AppErrorType extends Error {
   isOperational: boolean;
   statusCode: number;
   status: string;
 }
 
-function handleProduction(error: AppError, res: Response) {
+type MongooseCastError = mongoose.Error.CastError;
+
+type MongooseDuplicateError = MongoServerError;
+
+function handleInvalidID(error: MongooseCastError) {
+  return new AppError(`Invalid ${error.path}`, 401);
+}
+
+function handleValidationMongoose(error: AppErrorType) {
+  return new AppError(error.message, 401);
+}
+
+function handleProduction(error: AppErrorType, res: Response) {
   res.status(error.statusCode).json({
     status: error.status,
-    statusCode: error.statusCode,
     message: error.message,
+    isOperational: error.isOperational,
   });
 }
 
-function handleDevelopment(error: AppError | Error, res: Response) {
+function handleDevelopment(error: AppErrorType | Error, res: Response) {
   res.status(500).json({
     error,
     message: error.message,
@@ -23,15 +37,12 @@ function handleDevelopment(error: AppError | Error, res: Response) {
 }
 
 function handleError(
-  error: AppError | Error,
+  error: AppErrorType | Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  console.log(error);
-
-  const err = error as AppError;
-
+  let err = error as AppErrorType;
   // setting default values for generic Error
   (err.statusCode = err.statusCode || 500), (err.status = err.status || "fail");
   err.isOperational = err.isOperational || false;
@@ -40,8 +51,27 @@ function handleError(
     handleDevelopment(err, res);
   } else {
     // za production
+
+    if (err.name === "CastError" && err instanceof mongoose.Error.CastError) {
+      // za invalid id
+      err = handleInvalidID(err);
+    }
+
+    if (err.code === 11000) {
+      err = handleDuplicate(err);
+    }
+
+    if (err.name === "ValidationError") {
+      err = handleValidationMongoose(err);
+    }
     handleProduction(err, res);
   }
 }
 
 export default handleError;
+
+// sta je problem?
+// kada se desi mongoose validation greska ona ima statusCode 500 i nije operational sto nije tacno
+
+// da li da koristim new AppError (ne onda bi upadao u infinite loop), IPAK necu upasti u infinite loop jer nisam AppError stavio u next() DOKTORE
+// da u handleValidationMongoose rucno dodam error.isOperationa: true i statusCode: 401
