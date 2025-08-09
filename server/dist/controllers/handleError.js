@@ -1,7 +1,14 @@
 import AppError from "../utills/appError.js";
 import mongoose from "mongoose";
+function handleDuplicate(err) {
+    let usedField;
+    for (const key in err.keyValue) {
+        usedField = key;
+    }
+    return new AppError(`${usedField} is already in use`, 409);
+}
 function handleInvalidID(error) {
-    return new AppError(`Invalid ${error.path}`, 401);
+    return new AppError(`Invalid ${error.path}`, 409);
 }
 function handleValidationMongoose(error) {
     return new AppError(error.message, 401);
@@ -34,7 +41,12 @@ function handleError(error, req, res, next) {
             // za invalid id
             err = handleInvalidID(err);
         }
+        if (err instanceof mongoose.mongo.MongoServerError && err.code === 11000) {
+            // duplicate key (field is unique)
+            err = handleDuplicate(err);
+        }
         if (err.name === "ValidationError") {
+            // validation error
             err = handleValidationMongoose(err);
         }
         handleProduction(err, res);

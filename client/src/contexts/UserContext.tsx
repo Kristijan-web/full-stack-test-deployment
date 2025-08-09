@@ -38,25 +38,20 @@ export default function UserProvider({ children }: Props) {
         try {
           const fetchData = await fetch(`${API_URL}/api/v1/users/me`, {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-type": "application/json",
             },
           });
           // moguce je da server ne vraca JSON!
           const userData = await fetchData.json();
-          console.log("evo korisnikovih podataka, ", userData);
           if (!fetchData.ok) {
-            setUser(null);
-            return;
+            throw new Error(userData);
           }
           setUser(userData);
-        } catch (err) {
-          if (err instanceof Error) {
-            dispatch({
-              type: "setErrorProgrammatic",
-              payload: { errorMessage: err },
-            });
-          }
+        } catch (err: unknown) {
+          console.log(err);
+          setUser(null);
         } finally {
           setIsLoading(false);
         }

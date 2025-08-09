@@ -10,10 +10,19 @@ interface AppErrorType extends Error {
 
 type MongooseCastError = mongoose.Error.CastError;
 
-type MongooseDuplicateError = MongoServerError;
+type MongooseDuplicateError = mongoose.mongo.MongoServerError;
 
+function handleDuplicate(err: MongooseDuplicateError) {
+  let usedField;
+
+  for (const key in err.keyValue) {
+    usedField = key;
+  }
+
+  return new AppError(`${usedField} is already in use`, 409);
+}
 function handleInvalidID(error: MongooseCastError) {
-  return new AppError(`Invalid ${error.path}`, 401);
+  return new AppError(`Invalid ${error.path}`, 409);
 }
 
 function handleValidationMongoose(error: AppErrorType) {
@@ -57,11 +66,13 @@ function handleError(
       err = handleInvalidID(err);
     }
 
-    if (err.code === 11000) {
+    if (err instanceof mongoose.mongo.MongoServerError && err.code === 11000) {
+      // duplicate key (field is unique)
       err = handleDuplicate(err);
     }
 
     if (err.name === "ValidationError") {
+      // validation error
       err = handleValidationMongoose(err);
     }
     handleProduction(err, res);

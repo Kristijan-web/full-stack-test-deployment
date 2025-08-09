@@ -8,12 +8,18 @@ interface AppError extends Error {
 }
 
 export default function useCatchAsync<T>(
-  fn: (e: React.BaseSyntheticEvent) => Promise<T>,
+  fn: (e?: React.BaseSyntheticEvent) => Promise<T>,
   setIsLoading?: (value: boolean) => void
-): (e: React.BaseSyntheticEvent) => void {
+): (e?: React.BaseSyntheticEvent) => void {
   // sluzice da hvata asinhrone greske
-  // const { dispatch } = useError();
-  return (e: React.BaseSyntheticEvent) => {
+
+  // format error-a koji server vraca u production-u:
+  // {
+  //   status: error.status,
+  //   message: error.message,
+  //   isOperational: error.isOperational,
+  // }
+  return (e?: React.BaseSyntheticEvent) => {
     fn(e)
       .catch((err: Error | AppError) => {
         if ("isOperational" in err) {

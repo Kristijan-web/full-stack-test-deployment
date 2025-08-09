@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { Form } from "react-router-dom";
-import { useError } from "../../contexts/ErrorContext";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
+import { useUser } from "../../contexts/UserContext";
 
 type Form = {
   email: string;
@@ -12,11 +12,13 @@ type Form = {
 export default function LoginLayout() {
   const { formState, register, handleSubmit, getValues } = useForm<Form>();
   const { errors } = formState;
-  const { dispatch } = useError();
+  // const { dispatch: } = useError();
+  const { setUser } = useUser();
 
   const handleLogin = async () => {
     const sendLoginData = await fetch(`${API_URL}/api/v1/users/login`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-type": "application/json",
       },
@@ -25,20 +27,21 @@ export default function LoginLayout() {
         password: getValues().password,
       }),
     });
-    if (sendLoginData.status === 204) {
-      console.log("Login successful");
+    console.log(sendLoginData.status);
+    if (sendLoginData.status === 200) {
+      // mora da se gadje /me endpoint
+      console.log("UPAO");
+      const fetchUserData = await fetch(`${API_URL}/api/v1/users/me`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+
+      const userData = await fetchUserData.json();
+      setUser(userData.data);
       toast.success("Login successful!");
-    } else {
-      const response = await sendLoginData.json();
-      // da li ce catchAsync uhvatiti gresku koja nije operational
-      if (!sendLoginData.ok && response.error.isOperational) {
-        dispatch({
-          type: "setErrorOperational",
-          payload: {
-            errorMessage: response.data.message,
-          },
-        });
-      }
     }
   };
 
@@ -46,15 +49,6 @@ export default function LoginLayout() {
     console.log(data);
     if (e) {
       handleLogin();
-    } else {
-      dispatch({
-        type: "setErrorProgrammatic",
-        payload: {
-          errorMessage: new Error(
-            "Something went wrong, please contact developer"
-          ),
-        },
-      });
     }
   }
 
