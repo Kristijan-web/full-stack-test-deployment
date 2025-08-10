@@ -10,12 +10,9 @@ function sendResponse<T>(
 ) {
   res.status(statusCode).json({
     message: "success",
-    data: {
-      dataToSend,
-    },
+    data: dataToSend,
   });
 }
-
 const getAll = <T>(Model: Model<T>) => {
   return catchAsync(async (req, res, next) => {
     const allDocs = await Model.find();

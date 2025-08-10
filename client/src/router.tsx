@@ -6,6 +6,7 @@ import CartPage from "./pages/CartPage";
 import ShopPage from "./pages/ShopPage";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
+import RedirectIfLogged from "./ui/RedirectIfLogged";
 
 const router = createBrowserRouter([
   {
@@ -17,11 +18,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <LoginPage />,
+        element: (
+          <RedirectIfLogged>
+            <LoginPage />
+          </RedirectIfLogged>
+        ),
       },
       {
         path: "/signup",
-        element: <SignupPage />,
+        element: (
+          <RedirectIfLogged>
+            <SignupPage />
+          </RedirectIfLogged>
+        ),
       },
       {
         element: <CartPage />,
@@ -29,7 +38,7 @@ const router = createBrowserRouter([
       {
         path: "/shop",
         element: (
-          <ProtectedRoute allowedRoles="user">
+          <ProtectedRoute allowedRoles={["user"]} redirectTo="/">
             <ShopPage />
           </ProtectedRoute>
         ),

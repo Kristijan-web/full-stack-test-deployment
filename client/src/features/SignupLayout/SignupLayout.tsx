@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import { useError } from "../../contexts/ErrorContext";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { Form, useNavigate } from "react-router-dom";
@@ -12,19 +11,14 @@ type inputTypes = {
 };
 
 export default function SignupLayout() {
-  // const [email, setEmail] = useState<string>("");
-  // const [password, setPassword] = useState<string>("");
-  // const [confirmPassword, setconfirmPassword] = useState<string>("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { register, handleSubmit, getValues, formState } =
     useForm<inputTypes>();
   const { errors } = formState;
-  // const { dispatch } = useError();
 
-  const handleSignup = useCatchAsync(async (e: React.BaseSyntheticEvent) => {
-    e.preventDefault();
-    // pravi zahtev backend-u
+  const handleSignup = useCatchAsync(async (e?: React.BaseSyntheticEvent) => {
+    if (e) e.preventDefault();
     setIsLoading(true);
     const fetchReq = await fetch("http://127.0.0.1:3000/api/v1/users/signup", {
       method: "POST",
@@ -32,24 +26,20 @@ export default function SignupLayout() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // email: getValues().email,
+        email: getValues().email,
         password: getValues().password,
         confirmPassword: getValues().password,
       }),
     });
     const responseData = await fetchReq.json();
     if (!fetchReq.ok) {
-      console.log("evo upao u not ok");
-      throw new Error(responseData.error);
-      // return dispatch({
-      //   type: "setErrorOperational",
-      //   payload: { errorMessage: { message: responseData.message } },
-      // });
+      const error = new Error("Something went wrong...EE");
+      error.responseData = responseData;
+      throw error;
     }
-    console.log(responseData);
     toast.success("Signup successful");
     navigate("/");
-  });
+  }, setIsLoading);
 
   function onSuccess(data: inputTypes, e?: React.BaseSyntheticEvent) {
     console.log("Evo data za fields, ", data);
@@ -72,8 +62,6 @@ export default function SignupLayout() {
               id="email"
               type="email"
               className="border-1 rounded-xs"
-              // onChange={(e) => setEmail(e.target.value)}
-              // value={email}
               {...register("email", { required: "This field is required" })}
             />
           </div>
@@ -83,8 +71,6 @@ export default function SignupLayout() {
               id="password"
               type="text"
               className="border-1 rounded-xs"
-              // onChange={(e) => setPassword(e.target.value)}
-              // value={password}
               {...register("password", {
                 required: "This field is required",
                 validate: (value) => {
@@ -103,8 +89,6 @@ export default function SignupLayout() {
               id="confirmPassword"
               type="text"
               className="border-1 rounded-xs"
-              // onChange={(e) => setconfirmPassword(e.target.value)}
-              // value={confirmPassword}
               {...register("confirmPassword", {
                 required: "This field is required",
                 validate: (value) => {

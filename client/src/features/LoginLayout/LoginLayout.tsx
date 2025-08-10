@@ -3,6 +3,7 @@ import { Form } from "react-router-dom";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
 import { useUser } from "../../contexts/UserContext";
+import useCatchAsync from "../../utills/catchAsync";
 
 type Form = {
   email: string;
@@ -12,10 +13,9 @@ type Form = {
 export default function LoginLayout() {
   const { formState, register, handleSubmit, getValues } = useForm<Form>();
   const { errors } = formState;
-  // const { dispatch: } = useError();
   const { setUser } = useUser();
 
-  const handleLogin = async () => {
+  const handleLogin = useCatchAsync(async () => {
     const sendLoginData = await fetch(`${API_URL}/api/v1/users/login`, {
       method: "POST",
       credentials: "include",
@@ -27,10 +27,7 @@ export default function LoginLayout() {
         password: getValues().password,
       }),
     });
-    console.log(sendLoginData.status);
     if (sendLoginData.status === 200) {
-      // mora da se gadje /me endpoint
-      console.log("UPAO");
       const fetchUserData = await fetch(`${API_URL}/api/v1/users/me`, {
         method: "POST",
         credentials: "include",
@@ -40,10 +37,11 @@ export default function LoginLayout() {
       });
 
       const userData = await fetchUserData.json();
+      console.log(userData);
       setUser(userData.data);
       toast.success("Login successful!");
     }
-  };
+  });
 
   function handleSuccess(data: Form, e?: React.BaseSyntheticEvent) {
     console.log(data);

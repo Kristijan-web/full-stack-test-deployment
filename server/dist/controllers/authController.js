@@ -21,9 +21,10 @@ function editCookieJWT(req, res, next, currentUser) {
         return next(new AppError("Failed to create new user, error in service", 400));
     }
     // secure: process.env.NODE_ENV === "production",
-    // sameSite: "none" as "none",
     const cookieOptions = {
         expires: new Date(Date.now() + +process.env.JWT_EXPIRES * 24 * 60 * 60 * 1000),
+        sameSite: "none",
+        secure: true,
         httpOnly: true,
     };
     res.cookie("jwt", jwtToken, cookieOptions);
@@ -35,7 +36,6 @@ const protect = catchAsync(async (req, res, next) => {
     // 2. Provera da li user i dalje postoji
     // 3. Provera vremena kada je sifra izmenjena sa vremenom kada je jwt napravljen (mozda je korisnik izmenio sifru pa da slucajno stari jwt ne ostane validan)
     // token mi se nalazi u http only kolacicu
-    console.log(req.cookies);
     const jwtFromCookie = req.cookies?.jwt;
     if (!jwtFromCookie) {
         console.log("EEEJ");

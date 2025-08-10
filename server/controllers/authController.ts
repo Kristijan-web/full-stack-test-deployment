@@ -35,12 +35,13 @@ function editCookieJWT(
     );
   }
   // secure: process.env.NODE_ENV === "production",
-  // sameSite: "none" as "none",
 
   const cookieOptions = {
     expires: new Date(
       Date.now() + +process.env.JWT_EXPIRES * 24 * 60 * 60 * 1000
     ),
+    sameSite: "none" as "none",
+    secure: true,
     httpOnly: true,
   };
   res.cookie("jwt", jwtToken, cookieOptions);
@@ -52,8 +53,6 @@ const protect = catchAsync(async (req, res, next) => {
   // 2. Provera da li user i dalje postoji
   // 3. Provera vremena kada je sifra izmenjena sa vremenom kada je jwt napravljen (mozda je korisnik izmenio sifru pa da slucajno stari jwt ne ostane validan)
   // token mi se nalazi u http only kolacicu
-  console.log(req.cookies);
-
   const jwtFromCookie = req.cookies?.jwt;
   if (!jwtFromCookie) {
     console.log("EEEJ");
@@ -123,8 +122,10 @@ const login = catchAsync(async (req, res, next) => {
   if (!isPasswordCorrect) {
     return next(new AppError("Passwords do not match", 401));
   }
+
   // mora jwt da mu ubacim
   editCookieJWT(req, res, next, currentUser);
+
   res.status(200).send();
 });
 

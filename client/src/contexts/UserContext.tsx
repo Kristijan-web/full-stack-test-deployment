@@ -48,7 +48,7 @@ export default function UserProvider({ children }: Props) {
           if (!fetchData.ok) {
             throw new Error(userData);
           }
-          setUser(userData);
+          setUser(userData.data);
         } catch (err: unknown) {
           console.log(err);
           setUser(null);

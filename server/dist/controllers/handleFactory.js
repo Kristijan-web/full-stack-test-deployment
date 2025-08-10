@@ -3,9 +3,7 @@ import catchAsync from "../utills/catchAsync.js";
 function sendResponse(res, dataToSend, statusCode) {
     res.status(statusCode).json({
         message: "success",
-        data: {
-            dataToSend,
-        },
+        data: dataToSend,
     });
 }
 const getAll = (Model) => {

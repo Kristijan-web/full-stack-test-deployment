@@ -4,9 +4,14 @@ import { Navigate } from "react-router-dom";
 
 type Props = {
   children: ReactNode;
-  allowedRoles: string;
+  allowedRoles: [string];
+  redirectTo: string;
 };
-export default function ProtectedRoute({ children, allowedRoles }: Props) {
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+  redirectTo,
+}: Props) {
   const { user, isLoading } = useUser();
   if (isLoading) {
     return <p>Loading...</p>;
@@ -17,5 +22,10 @@ export default function ProtectedRoute({ children, allowedRoles }: Props) {
   if (allowedRoles.includes(user.role)) {
     return <>{children}</>;
   }
-  return <Navigate to="/signup" replace />;
+  return <Navigate to={redirectTo} replace />;
 }
+
+// ima stranice gde korisnik mora biti ulogovan da bi pristupio
+// ima stranice gde korisnik mora imati dozvolu da bi pristupio
+// U cemu je problem?
+// Problem je u tome sto ne radim pravilno redirect, redirect treba da se radi u zavinosti akcije korisnika

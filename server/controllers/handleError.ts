@@ -44,9 +44,8 @@ function handleDevelopment(error: AppErrorType | Error, res: Response) {
     stack: error.stack,
   });
 }
-
 function handleError(
-  error: AppErrorType | Error,
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
@@ -80,9 +79,3 @@ function handleError(
 }
 
 export default handleError;
-
-// sta je problem?
-// kada se desi mongoose validation greska ona ima statusCode 500 i nije operational sto nije tacno
-
-// da li da koristim new AppError (ne onda bi upadao u infinite loop), IPAK necu upasti u infinite loop jer nisam AppError stavio u next() DOKTORE
-// da u handleValidationMongoose rucno dodam error.isOperationa: true i statusCode: 401
