@@ -30,7 +30,6 @@ function editCookieJWT(req, res, next, currentUser) {
     res.cookie("jwt", jwtToken, cookieOptions);
 }
 const protect = catchAsync(async (req, res, next) => {
-    // MORA PROTECT DA NAPRAVIM
     // edge cases:
     // 1. Desifrovanje jwt-a i validacija
     // 2. Provera da li user i dalje postoji
@@ -94,4 +93,13 @@ const login = catchAsync(async (req, res, next) => {
     editCookieJWT(req, res, next, currentUser);
     res.status(200).send();
 });
-export { protect, signup, login };
+const logout = catchAsync(async (req, res, next) => {
+    const cookieOptions = {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+    };
+    res.clearCookie("jwt", cookieOptions);
+    res.status(200).send();
+});
+export { protect, signup, login, logout };
