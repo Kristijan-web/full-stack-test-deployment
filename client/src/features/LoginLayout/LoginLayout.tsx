@@ -37,9 +37,17 @@ export default function LoginLayout() {
       });
 
       const userData = await fetchUserData.json();
+      if (!fetchUserData.ok) {
+        throw new Error("Something went wrong");
+      }
       console.log(userData);
       setUser(userData.data);
       toast.success("Login successful!");
+    } else {
+      const responseError = await sendLoginData.json();
+      const error = new Error("Something went wrong...");
+      error.responseData = responseError;
+      throw error;
     }
   });
 

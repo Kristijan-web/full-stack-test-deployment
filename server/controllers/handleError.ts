@@ -30,6 +30,7 @@ function handleValidationMongoose(error: AppErrorType) {
 }
 
 function handleProduction(error: AppErrorType, res: Response) {
+  console.log(error);
   res.status(error.statusCode).json({
     status: error.status,
     message: error.message,

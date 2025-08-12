@@ -35,6 +35,7 @@ const protect = catchAsync(async (req, res, next) => {
     // 2. Provera da li user i dalje postoji
     // 3. Provera vremena kada je sifra izmenjena sa vremenom kada je jwt napravljen (mozda je korisnik izmenio sifru pa da slucajno stari jwt ne ostane validan)
     // token mi se nalazi u http only kolacicu
+    console.log(req.cookies);
     const jwtFromCookie = req.cookies?.jwt;
     if (!jwtFromCookie) {
         console.log("EEEJ");
@@ -67,27 +68,29 @@ const signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
         email: req.body.email,
         password: req.body.password,
+        fullName: req.body.fullName,
         confirmPassword: req.body.confirmPassword,
     });
     if (!newUser) {
         return next(new AppError("Failed to create new user", 400));
     }
     editCookieJWT(req, res, next, newUser);
+    newUser.password = undefined;
     res.status(200).json({
         message: "success",
+        data: newUser,
     });
 });
 const login = catchAsync(async (req, res, next) => {
-    // Kako se radi login?
     // User se nalazi na osnovu mail-a u bazi i zatim se porede hashovane sifre
     const { email, password } = req.body;
     const currentUser = await User.findOne({ email });
     if (!currentUser) {
-        return next(new AppError("Email is incorrect", 401));
+        return next(new AppError("Email does not exist", 401));
     }
     const isPasswordCorrect = await currentUser.correctPassword(password, currentUser.password);
     if (!isPasswordCorrect) {
-        return next(new AppError("Passwords do not match", 401));
+        return next(new AppError("Password is not correct", 401));
     }
     // mora jwt da mu ubacim
     editCookieJWT(req, res, next, currentUser);
@@ -102,4 +105,25 @@ const logout = catchAsync(async (req, res, next) => {
     res.clearCookie("jwt", cookieOptions);
     res.status(200).send();
 });
-export { protect, signup, login, logout };
+const changePassword = catchAsync(async (req, res, next) => {
+    // mora da se upise vreme kada je promenjena sifra
+    // da li da koristim findByIdAndUpdate ili da dohvatim usera, rucno izmenim sifru i uradim save()
+    // po kursu on koristi #2 metodu. Zasto je ona bolja?
+    // Bolje je zato sto trigeruje pre-save-document-middleware
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new AppError("User not found", 404));
+    }
+    const doesPasswordMatch = user?.correctPassword(req.body.oldPassword, user.password);
+    if (!doesPasswordMatch) {
+        return next(new AppError("Old password is not correct", 401));
+    }
+    user.password = req.body.newPassword;
+    user.confirmPassword = req.body.confirmNewPassword;
+    await user.save(); // ovo ce pokrenuti schema validaciju
+    // izmeni passwordChangedAt to jest napravi pre-save-document-middleware CHECKED
+    // posalji novi jwt korisniku
+    editCookieJWT(req, res, next, user);
+    res.status(200).send();
+});
+export { protect, signup, login, logout, changePassword };

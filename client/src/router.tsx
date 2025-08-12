@@ -7,6 +7,7 @@ import ShopPage from "./pages/ShopPage";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RedirectIfLogged from "./ui/RedirectIfLogged";
+import ProfilePage from "./pages/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["user"]} redirectTo="/">
             <ShopPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute allowedRoles={["user", "tourGuide"]} redirectTo="/">
+            <ProfilePage />
           </ProtectedRoute>
         ),
       },

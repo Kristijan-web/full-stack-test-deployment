@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
         required: [true, "Email is required"],
         unique: true,
     },
+    fullName: {
+        type: String,
+        required: [true, "Full name is required"],
+    },
     password: {
         type: String,
         required: [true, "Password is required"],
@@ -28,9 +32,18 @@ const userSchema = new mongoose.Schema({
     },
 });
 userSchema.pre("save", async function (next) {
-    if (this.isModified(this.password) || this.isNew) {
+    if (this.isModified("password") || this.isNew) {
         this.password = await bcrypt.hash(this.password, 12);
+        // dodaj za passwordChangedAt
+        this.passwordChangedAt = Date.now() / 1000 - 2;
         this.confirmPassword = undefined;
+    }
+    next();
+});
+userSchema.pre(/^find/, function (next) {
+    // this pokazuje na query objekat
+    if (this instanceof mongoose.Query) {
+        this.select("-__v");
     }
     next();
 });
@@ -44,13 +57,5 @@ userSchema.methods.didPasswordChange = function (JWTInitiatedAt) {
     }
     return false;
 };
-userSchema.pre(/^find/, function (next) {
-    // this pokazuje na query objekat
-    if (this instanceof mongoose.Query) {
-        this.select("-__v");
-    }
-    next();
-    next();
-});
 const User = mongoose.model("users", userSchema);
 export default User;

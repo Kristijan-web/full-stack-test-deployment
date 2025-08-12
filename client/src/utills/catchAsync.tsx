@@ -14,7 +14,7 @@ export default function useCatchAsync<T>(
   return (e?: React.BaseSyntheticEvent) => {
     fn(e)
       .catch((err: Error) => {
-        if (err.responseData?.isOperational) {
+        if (err?.responseData?.isOperational) {
           toast.error(err.responseData.message);
         } else {
           toast.error("Something went wrong,please contact developer");

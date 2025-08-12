@@ -3,14 +3,17 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { Form, useNavigate } from "react-router-dom";
 import useCatchAsync from "../../utills/catchAsync";
+import { useUser } from "../../contexts/UserContext";
 
 type inputTypes = {
   email: string;
   password: string;
+  fullName: string;
   confirmPassword: string;
 };
 
 export default function SignupLayout() {
+  const { setUser } = useUser();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { register, handleSubmit, getValues, formState } =
@@ -22,21 +25,25 @@ export default function SignupLayout() {
     setIsLoading(true);
     const fetchReq = await fetch("http://127.0.0.1:3000/api/v1/users/signup", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email: getValues().email,
         password: getValues().password,
+        fullName: getValues().fullName,
         confirmPassword: getValues().password,
       }),
     });
     const responseData = await fetchReq.json();
     if (!fetchReq.ok) {
-      const error = new Error("Something went wrong...EE");
+      const error = new Error("Something went wrong...");
       error.responseData = responseData;
       throw error;
     }
+
+    setUser(responseData.data);
     toast.success("Signup successful");
     navigate("/");
   }, setIsLoading);
@@ -56,6 +63,15 @@ export default function SignupLayout() {
           onSubmit={handleSubmit(onSuccess)}
           className="flex items-center justify-center flex-col gap-5"
         >
+          <div className="flex flex-col items-start gap-3">
+            <label htmlFor="email">Full name</label>
+            <input
+              id="email"
+              type="text"
+              className="border-1 rounded-xs"
+              {...register("fullName", { required: "This field is required" })}
+            />
+          </div>
           <div className="flex flex-col items-start gap-3">
             <label htmlFor="email">Email</label>
             <input

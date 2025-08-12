@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import useCatchAsync from "../../utills/catchAsync";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
@@ -27,8 +26,8 @@ export default function Logout() {
   });
 
   return (
-    <NavLink to="" onClick={handleLogout}>
+    <p className="cursor-pointer" onClick={handleLogout}>
       Logout
-    </NavLink>
+    </p>
   );
 }

@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 
 type Props = {
   children: ReactNode;
-  allowedRoles: [string];
+  allowedRoles: string[];
   redirectTo: string;
 };
 export default function ProtectedRoute({

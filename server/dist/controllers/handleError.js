@@ -14,6 +14,7 @@ function handleValidationMongoose(error) {
     return new AppError(error.message, 401);
 }
 function handleProduction(error, res) {
+    console.log(error);
     res.status(error.statusCode).json({
         status: error.status,
         message: error.message,

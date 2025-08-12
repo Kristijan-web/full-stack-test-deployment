@@ -25,7 +25,7 @@ export default function Header() {
           {user ? (
             <>
               <li>
-                <NavLink to="/cart">Profile</NavLink>
+                <NavLink to="/profile">Profile</NavLink>
               </li>
               <li>
                 <Logout />
