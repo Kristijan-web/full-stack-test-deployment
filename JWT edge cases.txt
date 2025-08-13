@@ -1,0 +1,9 @@
+Pravimo protect middleware koji ce da:
+
+- Getting token and checking if it's there
+
+- Comparing token signatures (verification)
+
+- Check if user still exist
+
+- Check if user changed password after the token was issued

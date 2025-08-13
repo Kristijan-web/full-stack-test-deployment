@@ -1,0 +1,32 @@
+Pitanja koja moram postaviti pre nego sto krenem error handling:
+
+1.kada radim error hanlding u node-u i radim sa operational greskama, mora da se zapitam da li ja greska za programere koji koriste moj API ili sam ja ujedno i frontned i backend programer, to jest da li API koristim za svoju aplikaciju ili nudim uslugu preko API-a.
+
+Da li ovo saljem da bi programer na frontendu razumeo gresku(koristi moj api) ili saljem korisniku sajta(ukoliko radim i frontned i backend)?
+
+2. KAKO da znam da li je greska koja je prikazana na frontend-u greska sa frontend-a ili servera?
+
+3. Ako sam ja frontend/backend onda bih na frontu ispisao gresku vracenu od servera korisniku, tako da kada pisem operational greske na backend-u ona su upucene korisnicima sajta
+
+4. Ako neko koristi moj API onda su operational greske vise upucene programerima
+
+
+FINAL FOR SERVER ERROS:
+
+- Global error handling middleware ce uhvatiti i synchronous greske!
+
+FINAL FOR ERRORS IN FRONTEND:
+
+Backend greske dobijene API-em iz browsera (operational i programmatic) handlujem na frontend-u tako sto ako je if(!res.ok) prosledjujem objekat greske catch-u sa throw new Error i onda u useCatchAsync proveravam da li objekat sadrzi isOperational i onda prikazujem error message sa servera klijentu
+
+Frontend greske (vecinom operational) koje su van catch/async-a se prosledjuju klasi AppError koja ce ih prekazati preko toastera (to ce uglavnom biti oprational greske), mislio o porukama za greske koje prikazujes da budu za korisnika sajta a ne za onoga ko pokusava nesto da mulja, sto se cine (programmatic synchronous) gresaka za njih koristi errorBoundary! 
+
+Programmatic frontend greske su resene koriscnjem typescript-a!
+- Za hvatanje programmatic gresaka se koristi errorBoundary on ce uhvatiti synchronous greske ali ne iz fetcha!
+
+
+Error tipovi koje baca mongoose
+
+- err.name === 'CastError' -> kada se prosledi invalidan id 
+- err.code === 11000 -> duplicate key error (unique je polje)
+- err.name === "ValidationError" -> greska u validaciji
