@@ -26,6 +26,7 @@ const getAll = <T>(Model: Model<T>) => {
 const getOne = <T>(Model: Model<T>) => {
   return catchAsync(async (req, res, next) => {
     // id se nalazu params od request
+
     const { id } = req.params;
     const doc = await Model.findById(id);
     if (!doc) {

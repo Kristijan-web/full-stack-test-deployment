@@ -12,10 +12,8 @@ export default function ProtectedRoute({
   allowedRoles,
   redirectTo,
 }: Props) {
-  const { user, isLoading } = useUser();
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  const { user } = useUser();
+
   if (user === null) {
     return <Navigate to="/signup" replace />;
   }

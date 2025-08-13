@@ -7,7 +7,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { deleteOne } from "./handleFactory.js";
 import { NextFunction, Request, Response } from "express";
 import { HydratedDocument } from "mongoose";
-
+import sendMail from "../utills/sendMail.js";
+import crypto from "crypto";
 function editCookieJWT(
   req: Request,
   res: Response,
@@ -170,4 +171,71 @@ const changePassword = catchAsync(async (req, res, next) => {
   res.status(200).send();
 });
 
-export { protect, signup, login, logout, changePassword };
+const passwordResetToken = catchAsync(async (req, res, next) => {
+  // na osnovu mail-a nalazim user-a
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("Email is incorrect", 404));
+  }
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  const reset_link = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/users/resetPassword/${resetToken}`;
+
+  const options = {
+    from: `Kristijan krimster8@gmail.com`,
+    to: user.email,
+    subject: "Your reset token, valid for next 10 minutes",
+    text: `Reset token: ${reset_link}`,
+  };
+  await sendMail(options);
+  res.status(204).send();
+});
+
+const forgotPassword = catchAsync(async (req, res, next) => {
+  //  - Get user based on the token
+
+  // - Check if token has not expired and there is user, set the new password
+
+  // - Update changedPasswordAt property for the user
+
+  // - Log the user in, send JWT
+
+  const { token } = req.params;
+  const { password, confirmPassword } = req.body;
+  // mora da se hashuje token i na osnovu hash-ovanog tokena dohvati user
+
+  const tokenHashed = crypto.createHash("sha256").update(token).digest("hex");
+
+  // nadji usera po tokeni i  da je expiresToken manje od Date.now()
+  const user = await User.findOne({
+    passwordResetToken: tokenHashed,
+    passwordResetExpires: {
+      $gt: new Date(Date.now()),
+    },
+  });
+  if (!user) {
+    return next(
+      new AppError("User has been removed or token has expired", 400)
+    );
+  }
+
+  // set new Password, and change passwordChangedAt
+  user.password = password;
+  user.confirmPassword = confirmPassword;
+  await user.save();
+  editCookieJWT(req, res, next, user);
+  res.status(200).send();
+});
+
+export {
+  protect,
+  signup,
+  login,
+  logout,
+  changePassword,
+  passwordResetToken,
+  forgotPassword,
+};

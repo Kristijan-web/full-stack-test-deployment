@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Form } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
 import { useUser } from "../../contexts/UserContext";
@@ -40,7 +40,6 @@ export default function LoginLayout() {
       if (!fetchUserData.ok) {
         throw new Error("Something went wrong");
       }
-      console.log(userData);
       setUser(userData.data);
       toast.success("Login successful!");
     } else {
@@ -60,10 +59,10 @@ export default function LoginLayout() {
 
   return (
     <div>
-      <div className="px-5 max-w-250 mx-auto">
-        <Form
+      <div className="px-5 max-w-250 mx-auto flex items-center justify-center">
+        <form
           onSubmit={handleSubmit(handleSuccess)}
-          className="flex items-center justify-center flex-col gap-5"
+          className="inline-flex items-start justify-center flex-col gap-5"
         >
           <div className="flex flex-col gap-2">
             <label htmlFor="email">Email</label>
@@ -84,10 +83,18 @@ export default function LoginLayout() {
               {...register("password", { required: "This field is required" })}
             />
           </div>
+          <div>
+            <Link
+              to="/forgot-password"
+              className="hover:text-blue-500 cursor-pointer hover:underline hover:underline-offset-3"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <button type="submit" className="px-4 py-1 border-1 rounded-xs">
             Login
           </button>
-        </Form>
+        </form>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import mongoose, { InferSchemaType } from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 interface IUser extends mongoose.Document {
   email: string;
@@ -7,7 +8,10 @@ interface IUser extends mongoose.Document {
   password: string;
   confirmPassword: string | undefined;
   role: string;
-  passwordChangedAt: number;
+  passwordChangedAt: Date;
+  passwordResetToken: string;
+  passwordResetExpires: Date;
+  createPasswordResetToken: () => string;
   correctPassword(
     candidatePassword: string,
     userPassword: string
@@ -43,7 +47,13 @@ const userSchema = new mongoose.Schema<IUser>({
     default: "user",
   },
   passwordChangedAt: {
-    type: Number,
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordResetExpires: {
+    type: Date,
   },
 });
 
@@ -51,7 +61,7 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("password") || this.isNew) {
     this.password = await bcrypt.hash(this.password, 12);
     // dodaj za passwordChangedAt
-    this.passwordChangedAt = Date.now() / 1000 - 2;
+    this.passwordChangedAt = new Date(Date.now() - 2000);
     this.confirmPassword = undefined;
   }
   next();
@@ -78,6 +88,15 @@ userSchema.methods.didPasswordChange = function (JWTInitiatedAt: number) {
     return true;
   }
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  // koristi se crypt build in biblioteka da se napravi hash i upise u bazu
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenHashed = crypto.createHash("sha256").update(token).digest("hex");
+  this.passwordResetToken = tokenHashed;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minuta
+  return token;
 };
 
 type UserType = InferSchemaType<typeof userSchema>;

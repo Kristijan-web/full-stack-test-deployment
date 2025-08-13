@@ -8,6 +8,8 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RedirectIfLogged from "./ui/RedirectIfLogged";
 import ProfilePage from "./pages/ProfilePage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +18,22 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/reset-password",
+        element: (
+          <RedirectIfLogged>
+            <ResetPasswordPage />
+          </RedirectIfLogged>
+        ),
+      },
+      {
+        path: "/forgot-password",
+        element: (
+          <RedirectIfLogged>
+            <ForgotPasswordPage />
+          </RedirectIfLogged>
+        ),
       },
       {
         path: "/login",

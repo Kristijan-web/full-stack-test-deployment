@@ -7,11 +7,8 @@ type Props = {
 };
 
 export default function RedirectIfLogged({ children }: Props) {
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
   if (user) {
     return <Navigate to="/" replace={true} />;
   }
