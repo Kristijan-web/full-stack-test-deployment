@@ -59,7 +59,12 @@ userSchema.methods.correctPassword = async function (userPass, dbPass) {
 };
 userSchema.methods.didPasswordChange = function (JWTInitiatedAt) {
     // JWTInitatedAt je vreme u sekundama, znaci passwordChangedAt isto mora biti u sekundama
-    if (this.passwordChangedAt > JWTInitiatedAt) {
+    // exp kod jwt-a radi u sekundama
+    // JWTInitiatedAt je u sekundama a treba milisekunde
+    const JWTInitiatedInMiliseconds = JWTInitiatedAt * 1000;
+    const passwordChangedAtMiliseconds = new Date(this.passwordChangedAt).getTime();
+    console.log("ZA JWT I passowrdChangedAt", JWTInitiatedInMiliseconds, passwordChangedAtMiliseconds);
+    if (passwordChangedAtMiliseconds > JWTInitiatedInMiliseconds) {
         return true;
     }
     return false;

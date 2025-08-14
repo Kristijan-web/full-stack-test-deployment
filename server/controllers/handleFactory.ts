@@ -2,7 +2,7 @@ import AppError from "../utills/appError.js";
 import catchAsync from "../utills/catchAsync.js";
 import { HydratedDocument, Model } from "mongoose";
 import { Response } from "express";
-
+import type { UserType } from "../models/userModel.js";
 function sendResponse<T>(
   res: Response,
   dataToSend: HydratedDocument<T> | HydratedDocument<T>[],
@@ -31,6 +31,10 @@ const getOne = <T>(Model: Model<T>) => {
     const doc = await Model.findById(id);
     if (!doc) {
       return new AppError("Provided id does not exist", 404);
+    }
+    // OVO DA se izmeni
+    if (doc instanceof HydratedDocument<UserType>) {
+      doc.password = undefined;
     }
     sendResponse(res, doc, 200);
   });

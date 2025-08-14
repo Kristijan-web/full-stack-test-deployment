@@ -4,6 +4,7 @@ import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
 import { useUser } from "../../contexts/UserContext";
 import useCatchAsync from "../../utills/catchAsync";
+import sendServerErrorToCatch from "../../utills/sendServerErrorToCatch";
 
 type Form = {
   email: string;
@@ -27,27 +28,26 @@ export default function LoginLayout() {
         password: getValues().password,
       }),
     });
-    if (sendLoginData.status === 200) {
-      const fetchUserData = await fetch(`${API_URL}/api/v1/users/me`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
 
-      const userData = await fetchUserData.json();
-      if (!fetchUserData.ok) {
-        throw new Error("Something went wrong");
-      }
-      setUser(userData.data);
-      toast.success("Login successful!");
-    } else {
-      const responseError = await sendLoginData.json();
-      const error = new Error("Something went wrong...");
-      error.responseData = responseError;
-      throw error;
+    if (!sendLoginData.ok) {
+      await sendServerErrorToCatch(sendLoginData);
     }
+
+    const fetchUserData = await fetch(`${API_URL}/api/v1/users/me`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    const userData = await fetchUserData.json();
+
+    if (!fetchUserData.ok) {
+      throw new Error("Something went wrong...");
+    }
+    setUser(userData.data);
+    toast.success("Login successful!");
   });
 
   function handleSuccess(data: Form, e?: React.BaseSyntheticEvent) {

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import useCatchAsync from "../../utills/catchAsync";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
+import sendServerErrorToCatch from "../../utills/sendServerErrorToCatch";
 
 type FormType = {
   oldPassword: string;
@@ -26,10 +27,7 @@ export default function PasswordChange() {
       }),
     });
     if (!fetchData.ok) {
-      const responseError = await fetchData.json();
-      const error = new Error("Something went wrong...");
-      error.responseData = responseError;
-      throw error;
+      await sendServerErrorToCatch(fetchData);
     }
     toast.success("Password changed successfuly");
     reset();

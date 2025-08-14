@@ -9,8 +9,8 @@ interface IUser extends mongoose.Document {
   confirmPassword: string | undefined;
   role: string;
   passwordChangedAt: Date;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   createPasswordResetToken: () => string;
   correctPassword(
     candidatePassword: string,
@@ -84,7 +84,18 @@ userSchema.methods.correctPassword = async function (
 
 userSchema.methods.didPasswordChange = function (JWTInitiatedAt: number) {
   // JWTInitatedAt je vreme u sekundama, znaci passwordChangedAt isto mora biti u sekundama
-  if (this.passwordChangedAt > JWTInitiatedAt) {
+  // exp kod jwt-a radi u sekundama
+  // JWTInitiatedAt je u sekundama a treba milisekunde
+  const JWTInitiatedInMiliseconds = JWTInitiatedAt * 1000;
+  const passwordChangedAtMiliseconds = new Date(
+    this.passwordChangedAt
+  ).getTime();
+  console.log(
+    "ZA JWT I passowrdChangedAt",
+    JWTInitiatedInMiliseconds,
+    passwordChangedAtMiliseconds
+  );
+  if (passwordChangedAtMiliseconds > JWTInitiatedInMiliseconds) {
     return true;
   }
   return false;

@@ -3,6 +3,7 @@ import { useUser } from "../../contexts/UserContext";
 import useCatchAsync from "../../utills/catchAsync";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
+import sendServerErrorToCatch from "../../utills/sendServerErrorToCatch";
 
 type FormType = {
   fullName: string;
@@ -32,9 +33,7 @@ export default function GeneralSettings() {
     const response = await fetchData.json();
 
     if (!fetchData.ok) {
-      const error = new Error("Something went wrong");
-      error.responseData = response;
-      throw error;
+      await sendServerErrorToCatch(fetchData);
     }
 
     toast.success("Update successful");

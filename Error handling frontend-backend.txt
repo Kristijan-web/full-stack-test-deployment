@@ -30,3 +30,19 @@ Error tipovi koje baca mongoose
 - err.name === 'CastError' -> kada se prosledi invalidan id 
 - err.code === 11000 -> duplicate key error (unique je polje)
 - err.name === "ValidationError" -> greska u validaciji
+
+========================================== NAJBITNIJE =====================================
+Pitanja:
+
+Za server:
+
+- Kada uhvatim operational gresku, prvo vidi da li je operational greska do mene ili do usera, ako je do usera onda bih hteo da posaljem poruku sa sto boljim opisom greske i hteo bi da je prikazem na frontend-u
+- Ukoliko je operational greske do mene, dovoljno je da se korisiniku prikaze ("Something went wrong...") na frontend-u
+
+Za frontend:
+
+- Sve funkcije koje komuniciraju sa serverom su wrap-ovane u useCatchAsync i on odlucuje o nacinu prikazivanja gresaka
+- Za programmatic greske koristim ErrorBoundary
+- za operational na frontendu bi mozda koristio catchAppError i koristio react-hot-toast za prikaz gresaka
+
+

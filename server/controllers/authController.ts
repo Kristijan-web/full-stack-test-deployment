@@ -115,7 +115,9 @@ const signup = catchAsync(async (req, res, next) => {
 const login = catchAsync(async (req, res, next) => {
   // User se nalazi na osnovu mail-a u bazi i zatim se porede hashovane sifre
   const { email, password } = req.body;
+
   const currentUser = await User.findOne({ email });
+
   if (!currentUser) {
     return next(new AppError("Email does not exist", 401));
   }
@@ -175,15 +177,11 @@ const passwordResetToken = catchAsync(async (req, res, next) => {
   // na osnovu mail-a nalazim user-a
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new AppError("Email is incorrect", 404));
+    return next(new AppError("Email does not exist", 404));
   }
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
-
-  const reset_link = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
+  const reset_link = `${req.protocol}://localhost:5173/reset-password?token=${resetToken}`;
   const options = {
     from: `Kristijan krimster8@gmail.com`,
     to: user.email,
@@ -217,17 +215,24 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     },
   });
   if (!user) {
-    return next(
-      new AppError("User has been removed or token has expired", 400)
-    );
+    return next(new AppError("Token has expired", 400));
   }
 
   // set new Password, and change passwordChangedAt
   user.password = password;
   user.confirmPassword = confirmPassword;
+  // trebao bi da obrisem passwordResetExpires i passwordResetToken
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+
   await user.save();
+
   editCookieJWT(req, res, next, user);
-  res.status(200).send();
+  user.password = undefined as any;
+  res.status(200).json({
+    message: "success",
+    data: user,
+  });
 });
 
 export {

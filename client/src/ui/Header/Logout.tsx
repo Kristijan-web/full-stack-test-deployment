@@ -2,6 +2,7 @@ import useCatchAsync from "../../utills/catchAsync";
 import { API_URL } from "../../utills/constants";
 import toast from "react-hot-toast";
 import { useUser } from "../../contexts/UserContext";
+import sendServerErrorToCatch from "../../utills/sendServerErrorToCatch";
 
 export default function Logout() {
   const { setUser } = useUser();
@@ -12,11 +13,8 @@ export default function Logout() {
     });
 
     if (!fetchData.ok) {
-      const response = await fetchData.json();
-      const error = new Error("Something went wrong...");
-      response.message = "Logout failed, please contact developer";
-      error.responseData = response;
-      throw error;
+      // nema mi smisla ovde prikazivati gresku sa servera, kada korisnik klikne logout i operacija ne uspe dovoljno je ("Something went wrong...") jer korisnikova akcija nema nikakvog uticaja na logout
+      await sendServerErrorToCatch(fetchData);
     }
 
     if (fetchData.ok) {
