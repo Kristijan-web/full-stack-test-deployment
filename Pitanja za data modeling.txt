@@ -1,0 +1,17 @@
+Kakav relationship type imaju tours i users?
+
+- Jedan tour moze da ima jednog tour guide-a, dok tour-guide moze da pripada vise tour-ova ONE:FEW
+
+Koliko cesto treba da se podaci citaju/kreiraju i koliko se cesto update-aju?
+
+- Podaci ce cesto citaju, ne update-uju se cesto
+
+Da li su tours i users usko povezani?
+
+- Jesu.
+
+Da li cu podatke iz tours i user query-ovati zajedno ili posebno?
+
+- Skoro uvek zajedno, u shop page-u cu trebati da za tour prikazem i ko je tourGuide, ako bih omogucio i reviews onda treba da se zna i tour i tourGuide kome ide review.
+
+Koristicu embedding, mada ne mogu koristiti embedding jer imam kolekciju users gde role moze biti "user", "tour-guide" , "admin"

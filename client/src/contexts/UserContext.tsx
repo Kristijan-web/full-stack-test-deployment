@@ -32,6 +32,7 @@ export default function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { dispatch } = useError();
+  console.log(user);
 
   useEffect(
     function gettingUserData() {

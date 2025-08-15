@@ -19,10 +19,15 @@ const getOne = (Model) => {
     return catchAsync(async (req, res, next) => {
         // id se nalazu params od request
         const { id } = req.params;
-        const doc = await Model.findById(id);
+        const doc = await Model.findById(id).select("-password -passwordChangedAt");
         if (!doc) {
             return new AppError("Provided id does not exist", 404);
         }
+        // OVO DA se izmeni
+        // if (doc instanceof User) {
+        //   doc.password = undefined as any;
+        //   doc.passwordChangedAt = undefined as any;
+        // }
         sendResponse(res, doc, 200);
     });
 };
