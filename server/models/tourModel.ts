@@ -41,9 +41,23 @@ const tourSchema = new mongoose.Schema({
   tourCover: {
     type: String,
   },
+  locations: [
+    {
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number,
+    },
+  ],
 });
-
 type TourType = InferSchemaType<typeof tourSchema>;
+
+tourSchema.index({ "locations.coordinates": "2dsphere" });
 
 const Tour = mongoose.model("Tour", tourSchema);
 
