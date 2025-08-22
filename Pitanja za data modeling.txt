@@ -15,3 +15,23 @@ Da li cu podatke iz tours i user query-ovati zajedno ili posebno?
 - Skoro uvek zajedno, u shop page-u cu trebati da za tour prikazem i ko je tourGuide, ako bih omogucio i reviews onda treba da se zna i tour i tourGuide kome ide review.
 
 Koristicu embedding, mada ne mogu koristiti embedding jer imam kolekciju users gde role moze biti "user", "tour-guide" , "admin"
+
+======================================
+
+Kako odrediti koja kolekcija je parent a koja child kada se radi referencing?
+
+Pravilo u praksi
+
+Ako dokument A može postojati bez dokumenta B → A je parent, B je child.
+
+Ako dokument B uvek mora pripadati dokumentu A → B je child.
+
+=======================================
+
+Kada imam odnos izmedju dve kolekcije 1:MANY, sa koje strane je parent a koje child?
+
+Parent = onaj koji postoji samostalno.
+
+Child = onaj koji zavisi od parent-a.
+
+👉 Dakle, u 1:FEW odnosu, “1” strana je parent, “FEW” strana je child.

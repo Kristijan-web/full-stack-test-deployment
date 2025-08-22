@@ -33,6 +33,7 @@ const getOne = (Model) => {
 };
 const createOne = (Model) => {
     return catchAsync(async function (req, res, next) {
+        console.log("EVO GA BODY U FACTORY", req.body);
         const doc = await Model.create(req.body);
         if (!doc) {
             return next(new AppError("Failed to create document", 400));

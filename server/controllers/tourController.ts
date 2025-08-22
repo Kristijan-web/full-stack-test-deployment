@@ -7,19 +7,24 @@ import { createOne, getAll, getOne } from "./handleFactory.js";
 
 function sendResponse(res: Response, data: TourType[]) {
   res.json({
-    data: "ALO KORISTI FACTORY",
+    data,
   });
 }
 
 const filterTourBody = (req: Request, res: Response, next: NextFunction) => {
+  // PROBLEM JE STO JE COORDINATES U LOCATIONS [[23,32]] a treba [23,32]
+
   req.body = {
     tourName: req.body.tourName,
+    tourPrice: req.body.tourPrice,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     guides: req.body.guides,
     leadGuide: req.body.leadGuide,
     tours: req.body.tours,
     tourCover: req.body.tourCover,
+    locations: req.body.locations,
+    tourGuides: req.body.tourGuides,
   };
 
   next();
