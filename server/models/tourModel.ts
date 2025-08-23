@@ -81,30 +81,34 @@ const tourSchema = new mongoose.Schema({
       },
     },
   ],
-  tourGuides: Array,
+  tourGuides: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Tour must have a guide"],
+    },
+  ],
 });
 type TourType = InferSchemaType<typeof tourSchema>;
 
 // tourSchema.index({ locations: "2dsphere" });
 
-tourSchema.pre("save", async function (next) {
-  // dohvati sve tour Guide-ove
-  // this pokazuje na document jer je u pitanju pre-document middleware
-  // dobicu niz Promise-a
-  const tourGuides = await Promise.all(
-    this.tourGuides.map(async (id) => {
-      return await User.findById(id);
-    })
-  );
-  // NE ZNAM SINTAKSU KADA TREBA DA RADIM EMBEDDING PREKO ID-A
+// za embedding po id-u
+// tourSchema.pre("save", async function (next) {
+//   const tourGuides = await Promise.all(
+//     this.tourGuides.map(async (id) => {
+//       return await User.findById(id);
+//     })
+//   );
+//   this.tourGuides = tourGuides;
+//   next();
+// });
 
-  // Kada bih radio embedding direktno u document-u a kada preko id-a
-  // Radio bi direktan embedding kada se odlucim za embedding i vidim da su podaci vrlo usko povezani i da nece biti potrebe za posebni query-anjem kolekcije koja se embeduje
+// za populate koristi pre-query middleware
 
-  // Proveri da li posstoje 2 nacina embedovanja: Embedovanje cele kolekcije u drugu ili po id-u i pre-document middleware-u
-
-  this.tourGuides = tourGuides;
-
+tourSchema.pre("find", function (next) {
+  // ty
+  this.populate({ path: "tourGuides" });
   next();
 });
 
