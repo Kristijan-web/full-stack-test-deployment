@@ -4,6 +4,7 @@ import userRouter from "./routes/userRouter.js";
 import tourRouter from "./routes/tourRouter.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import reviewRouter from "./routes/ReviewRouter.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json({ limit: "10kb" }));
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.use(handleError);
 export default app;
