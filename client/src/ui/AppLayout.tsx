@@ -3,6 +3,7 @@ import Header from "./Header/Header";
 import { useUser } from "../contexts/UserContext";
 
 export default function AppLayout() {
+  console.log("Was learning next js today :D");
   const { isLoading } = useUser();
   if (isLoading) {
     return (
