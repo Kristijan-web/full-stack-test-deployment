@@ -31,7 +31,7 @@ const getOne = <T>(Model: Model<T>) => {
     const { id } = req.params;
     const doc = await Model.findById(id).select("-password -passwordChangedAt");
     if (!doc) {
-      return new AppError("Provided id does not exist", 404);
+      return next(new AppError("Provided id does not exist", 404));
     }
     // OVO DA se izmeni
     // if (doc instanceof User) {

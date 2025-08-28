@@ -26,6 +26,20 @@ const reviewsSchema = new mongoose.Schema({
 });
 
 reviewsSchema.index({ tour: 1, user: 1 }, { unique: true });
+
+// prikazi podatke o useru na kom je komentarisano
+
+// koji middleware koristim?
+
+// Document, Query, Agregation
+
+// koristim pre query
+
+reviewsSchema.pre("find", function (next) {
+  this.populate("user");
+  next();
+});
+
 const Review = mongoose.model("Review", reviewsSchema);
 
 export default Review;

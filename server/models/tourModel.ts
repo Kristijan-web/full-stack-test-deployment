@@ -66,6 +66,10 @@ const tourSchema = new mongoose.Schema({
       required: [true, "Tour must have a guide"],
     },
   ],
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
 });
 type TourType = InferSchemaType<typeof tourSchema>;
 

@@ -65,6 +65,10 @@ const tourSchema = new mongoose.Schema({
             required: [true, "Tour must have a guide"],
         },
     ],
+    isActive: {
+        type: Boolean,
+        default: false,
+    },
 });
 // tourSchema.index({ locations: "2dsphere" });
 // za embedding po id-u
